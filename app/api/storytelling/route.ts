@@ -1,12 +1,19 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: Request) {
     try {
+        const apiKey = process.env.OPENAI_API_KEY;
+
+        if (!apiKey) {
+            console.error('OPENAI_API_KEY is missing from environment variables');
+            return NextResponse.json({ error: '인공지능 서비스 설정이 완료되지 않았습니다. (API Key missing)' }, { status: 500 });
+        }
+
+        const openai = new OpenAI({
+            apiKey: apiKey,
+        });
+
         const { name, year, occupation } = await req.json();
 
         if (!name || !year || !occupation) {
